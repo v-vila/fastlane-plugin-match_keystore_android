@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = '106952548+v-vila@users.noreply.github.com'
 
   spec.summary       = 'match android keystore with options'
-  # spec.homepage      = "https://github.com/<GITHUB_USERNAME>/fastlane-plugin-match_keystore_android"
+  spec.homepage      = "https://github.com/v-vila/fastlane-plugin-match_keystore_android"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
