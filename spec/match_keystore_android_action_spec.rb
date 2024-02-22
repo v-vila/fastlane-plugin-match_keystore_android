@@ -22,4 +22,3 @@ describe Fastlane::Actions::MatchKeystoreAction do
     end
   end
 end
-end
