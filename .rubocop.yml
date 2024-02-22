@@ -76,6 +76,8 @@ Layout/HashAlignment:
   Enabled: false
 Layout/DotPosition:
   Enabled: false
+Layout/TrailingEmptyLines:
+  Enabled: false
 Style/DoubleNegation:
   Enabled: false
 Style/SymbolArray:
@@ -160,6 +162,7 @@ Style/MutableConstant:
   Enabled: false
 Style/ZeroLengthPredicate:
   Enabled: false
+
 Style/IfInsideElse:
   Enabled: false
 Style/CollectionMethods:
