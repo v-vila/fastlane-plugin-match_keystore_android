@@ -14,7 +14,7 @@ describe Fastlane::Actions::MatchKeystoreAction do
     end
 
     it 'raises an error for missing keystore' do
-      expect(File).to receive(:exist?).and_return(false)
+      allow(File).to receive(:exist?).and_return(false)
 
       expect do
         Fastlane::Actions::MatchKeystoreAction.run(type: 'debug', force: false)
