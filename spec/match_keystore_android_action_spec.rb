@@ -20,5 +20,18 @@ describe Fastlane::Actions::MatchKeystoreAction do
         Fastlane::Actions::MatchKeystoreAction.run(type: 'debug', force: false)
       end.to raise_error(RuntimeError, /Missing keystore/)
     end
+
+    it 'clones the repository and copies the keystore' do
+      # Stubbing necessary methods and environment variables here...
+
+      # Create a dummy keystore file in the temporary directory
+      allow(FileUtils).to receive(:cp)
+      allow(File).to receive(:exist?).and_return(false) # To simulate that the keystore doesn't exist initially
+      allow(File).to receive(:exist?).with('/tmp/3b5afbde99f7752a/path_to_debug_keystore').and_return(true)
+
+      expect(FileUtils).to receive(:cp).with('/tmp/3b5afbde99f7752a/path_to_debug_keystore', '../')
+
+      Fastlane::Actions::MatchKeystoreAction.run(type: 'debug', force: false)
+    end
   end
 end
