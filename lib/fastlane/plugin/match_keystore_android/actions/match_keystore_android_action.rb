@@ -1,4 +1,6 @@
 require 'fastlane/action'
+require 'fastlane_core'
+
 require_relative '../helper/match_keystore_android_helper'
 
 module Fastlane
@@ -10,9 +12,9 @@ module Fastlane
 
         case keystore_type
         when 'debug'
-          keystore = ENV['ANDROID_MATCH_DEBUG_KEYSTORE']
+          keystore = ENV.fetch('ANDROID_MATCH_DEBUG_KEYSTORE')
         when 'release'
-          keystore = ENV['ANDROID_MATCH_RELEASE_KEYSTORE']
+          keystore = ENV.fetch('ANDROID_MATCH_RELEASE_KEYSTORE')
         else
           raise "Invalid type #{keystore_type}. Valid values: debug|release."
         end
@@ -22,7 +24,7 @@ module Fastlane
         return if !params[:force] && File.exist?(keystore)
 
         temp_dir = "/tmp/#{SecureRandom.hex(8)}"
-        git_clone_command = "git clone --branch #{ENV['ANDROID_MATCH_BRANCH']} #{ENV['ANDROID_MATCH_URL']} #{temp_dir}"
+        git_clone_command = "git clone --branch #{ENV.fetch('ANDROID_MATCH_BRANCH')} #{ENV.fetch('ANDROID_MATCH_URL')} #{temp_dir}"
         FileUtils.mkdir_p(temp_dir)
         sh(git_clone_command)
         FileUtils.cp("#{temp_dir}/#{keystore}", '../')
