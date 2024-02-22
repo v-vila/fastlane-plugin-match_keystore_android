@@ -19,15 +19,15 @@ module Fastlane
           raise "Invalid type #{keystore_type}. Valid values: debug|release."
         end
 
-        raise "Missing keystore #{keystore}." unless keystore
+        raise "Missing keystore #{keystore}." unless keystore && File.exist?(keystore)
 
-        return if !params[:force] && File.exist?(keystore)
+        return unless params[:force] || !File.exist?(keystore)
 
         temp_dir = "/tmp/#{SecureRandom.hex(8)}"
         git_clone_command = "git clone --branch #{ENV.fetch('ANDROID_MATCH_BRANCH')} #{ENV.fetch('ANDROID_MATCH_URL')} #{temp_dir}"
         FileUtils.mkdir_p(temp_dir)
         sh(git_clone_command)
-        FileUtils.cp("#{temp_dir}/#{keystore}", '../')
+        FileUtils.cp("#{temp_dir}/#{File.basename(keystore)}", '../')
         FileUtils.rm_rf(temp_dir)
       end
 
