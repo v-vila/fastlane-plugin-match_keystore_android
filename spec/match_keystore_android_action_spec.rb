@@ -1,5 +1,3 @@
-require_relative '../lib/fastlane/plugin/match_keystore_android/actions/match_keystore_android_action'
-
 describe Fastlane::Actions::MatchKeystoreAction do
   describe '#run' do
     before do
