@@ -1,58 +1,58 @@
-require 'fastlane/action'
-require 'fastlane_core'
-
-require_relative '../helper/match_keystore_android_helper'
-
 module Fastlane
   module Actions
     class MatchKeystoreAction < Action
       def self.run(params)
-        keystore_type = params[:type]
-        keystore = nil
-
-        case keystore_type
-        when 'debug'
-          keystore = ENV.fetch('ANDROID_MATCH_DEBUG_KEYSTORE')
-        when 'release'
-          keystore = ENV.fetch('ANDROID_MATCH_RELEASE_KEYSTORE')
-        else
-          raise "Invalid type #{keystore_type}. Valid values: debug|release."
+        keystore = params[:keystore]
+        type = params[:type]
+        
+        if type == 'debug'
+          keystore = ENV['ANDROID_MATCH_DEBUG_KEYSTORE']
+        elsif type == 'release'
+          keystore = ENV['ANDROID_MATCH_RELEASE_KEYSTORE']
+        elsif type
+          raise "Invalid type #{type}. Valid values: debug|release."
         end
-
-        raise "Missing keystore #{keystore}." unless keystore && File.exist?(keystore)
-
-        return unless params[:force] || !File.exist?(keystore)
-
-        temp_dir = "/tmp/#{SecureRandom.hex(8)}"
-        git_clone_command = "git clone --branch #{ENV.fetch('ANDROID_MATCH_BRANCH')} #{ENV.fetch('ANDROID_MATCH_URL')} #{temp_dir}"
-        FileUtils.mkdir_p(temp_dir)
-        sh(git_clone_command)
-        FileUtils.cp("#{temp_dir}/#{File.basename(keystore)}", '../')
+        
+        raise "Missing keystore #{keystore}." unless keystore
+        
+        return if !params[:force] && File.exist?(keystore)
+        
+        temp_dir = Dir.mktmpdir
+        git_url = ENV['ANDROID_MATCH_URL']
+        git_branch = ENV['ANDROID_MATCH_BRANCH']
+        
+        sh("git clone --branch #{git_branch} #{git_url} #{temp_dir}")
+        FileUtils.cp("#{temp_dir}/#{keystore}", '../')
         FileUtils.rm_rf(temp_dir)
       end
 
       def self.description
-        "Match keystore action"
+        "Clone and retrieve keystore from a Git repository"
       end
 
       def self.authors
-        ["Virginia Vila"]
+        ["Your Name"]
       end
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :type,
-                                       description: "Keystore type",
+          FastlaneCore::ConfigItem.new(key: :keystore,
+                                       description: "The keystore file name",
                                        optional: false),
+          FastlaneCore::ConfigItem.new(key: :type,
+                                       description: "Type of keystore (debug/release)",
+                                       optional: true,
+                                       default_value: "debug"),
           FastlaneCore::ConfigItem.new(key: :force,
-                                       description: "Force keystore update",
-                                       default_value: false,
-                                       is_string: false)
+                                       description: "Force clone even if keystore exists locally",
+                                       optional: true,
+                                       is_string: false,
+                                       default_value: false)
         ]
       end
 
       def self.is_supported?(platform)
-        true
+        platform == :android
       end
     end
   end
